@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "Action News Timer",
+    "icon": "./assets/app-icon.png",
+    "version": "0.1.0",
+    "primaryColor": "#1b1431",
+    "sdkVersion": "23.0.0",
+    "orientation": "landscape",
+    "slug": "action-news-game-timer",
+    "ios": {
+      "bundleIdentifier": "com.contendergames.actionnews.timer"
+    },
+    "android": {
+      "package": "com.contendergames.actionnews.timer",
+      "versionCode": 1
+    },
+    "splash": {
+      "backgroundColor": "#1b1431"
+    }
+  }
+}
