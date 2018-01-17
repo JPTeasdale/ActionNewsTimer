@@ -1,9 +1,8 @@
-const MinPhaseTwo = 15;
-const MaxPhaseTwo = 105;
+const MinPhaseTwo = 20;
+const MaxPhaseTwo = 110;
 
 const MinPhaseOne = 30;
 const MaxPhaseOne = 150;
-
 
 export default {
   MinPhaseOne,
@@ -24,6 +23,27 @@ export default {
     shouldCorrectPitch: false,
     volume: 1.0,
     isMuted: false,
-    isLooping: true,
+    isLooping: true
+  },
+  Images: {
+    Rainbow: require('./assets/images/rainbow.png'),
+    ActionNewsSplash: require('./assets/images/action-news.png'),
+    RangeMinSlider: require('./assets/images/range-min-slider-color.png'),
+    RangeThumb: require('./assets/images/range-thumb-only.png'),
+    ButtonStart: require('./assets/images/button-start.png'),
+    StartupSplash: require('./assets/images/explaination-bg.png'),
+    OnTheAirSplash: require('./assets/images/on-the-air.png')
+  },
+  Audio: {
+    NewsLoopA: require('./assets/audio/news-loop-a-looped.mp3'),
+    NewsLoopB: require('./assets/audio/news-loop-b.mp3')
+  },
+  Video: {
+    ActionNewsIntro: require('./assets/video/action-news-intro.mov')
+  },
+  Fonts: {
+    MontserratBlack: require('./assets/fonts/Montserrat-Black.ttf'),
+    MontserratBold: require('./assets/fonts/Montserrat-Bold.ttf'),
+    MontserratRegular: require('./assets/fonts/Montserrat-Regular.ttf')
   }
 };

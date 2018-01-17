@@ -26,7 +26,7 @@ export default class TimerScreen extends React.Component {
       timeRemaining = Math.floor(phaseOneTime + phaseTwoTime - elapsed);
       phaseName = 'Story Building Phase';
       phaseDesc = 'Reporters CAN NOT draw cards.';
-      nextPhase = 'When time is up, you\'re On the Air';
+      nextPhase = 'When time is up, you\'re On The Air!';
     }
 
     return (
@@ -53,24 +53,30 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: '#1b1431'
+    backgroundColor: '#fff45f'
   },
   textPhaseName: {
     textAlign: 'center',
     fontFamily: 'montserrat',
-    color: 'white',
+    color: '#1a1331',
+    textShadowOffset: {width: -2,height: 2},
+    textShadowColor: 'white',
     fontSize: 40
   },
   text: {
     textAlign: 'center',
     fontFamily: 'montserrat-bold',
-    color: 'white',
+    color: '#1a1331',
+    textShadowOffset: {width: -5,height: 5},
+    textShadowColor: 'white',
     fontSize: 150
   },
   textSmall: {
     textAlign: 'center',
     fontFamily: 'montserrat-light',
-    color: 'white',
+    color: '#1a1331',
+    textShadowOffset: {width: -1,height: 1},
+    textShadowColor: 'white',
     fontSize: 20
   }
 });

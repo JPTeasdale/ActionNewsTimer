@@ -1,21 +1,34 @@
 {
   "expo": {
-    "name": "Action News Timer",
-    "icon": "./assets/app-icon.png",
-    "version": "0.1.0",
-    "primaryColor": "#1b1431",
-    "sdkVersion": "23.0.0",
-    "orientation": "landscape",
+    "name": "ActionNewsTimer",
+    "version": "1.0.2",
+    "sdkVersion": "24.0.0",
     "slug": "action-news-game-timer",
+    "privacy": "public",
+    "platforms": ["ios", "android"],
+    "orientation": "landscape",
+    "primaryColor": "#1b1431",
+    "icon": "./assets/images/app-icon.png",
+    "assetBundlePatterns": [
+      "./assets/images/*"
+    ],
     "ios": {
-      "bundleIdentifier": "com.contendergames.actionnews.timer"
+      "bundleIdentifier": "com.contendergames.actionnews.timer",
+      "buildNumber": "1.0.2",
+      "loadJSInBackgroundExperimental": true
     },
     "android": {
       "package": "com.contendergames.actionnews.timer",
       "versionCode": 1
     },
-    "splash": {
+    "androidStatusBar": {
+      "barStyle": "dark-content",
       "backgroundColor": "#1b1431"
+    },
+    "splash": {
+      "image": "./assets/images/app-splash-big.png",
+      "backgroundColor": "#1b1431",
+      "resizeMode": "cover"
     }
   }
 }

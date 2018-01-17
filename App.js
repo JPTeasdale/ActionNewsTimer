@@ -6,13 +6,13 @@ import Constants from './constants';
 import SetupScreen from './screens/SetupScreen';
 import TimerScreen from './screens/TimerScreen';
 import CompleteScreen from './screens/CompleteScreen';
+import StartupScreen from './screens/StartupScreen';
 
 const INITIAL_STATE = {
   phaseOneTime: 90,
   phaseTwoTime: 60,
   complete: false,
   started: false,
-  splash: true,
   phaseOneComplete: false,
   finalCountdownStarted: false,
   elapsed: 0,
@@ -25,11 +25,12 @@ function sleep(ms) {
 
 export default class App extends React.Component {
   state = {
-    ...INITIAL_STATE
+    ...INITIAL_STATE,
   }
 
-  componentDidMount() {
-    this._loadAssets();
+  componentWillMount() {
+    this._loadAssets = this._loadAssets.bind(this);
+    this._loadFinished = this._loadFinished.bind(this);
   }
 
   componentWillUnmount() {
@@ -39,38 +40,62 @@ export default class App extends React.Component {
   }
 
   async _loadAssets() {
+    try {
+      console.log("loading fonts");
+      Font.loadAsync({
+        'montserrat-bold': Constants.Fonts.MontserratBlack,
+        'montserrat': Constants.Fonts.MontserratBold,
+        'montserrat-light': Constants.Fonts.MontserratRegular
+      });
+    } catch (err) {
+      console.warn("error loading fonts: ", err)
+      return;
+    }
+
+    const promises = [];
+    try {
+      console.log("loading audio/images/video");
+      promises.push(Expo.Asset.loadAsync(
+        Constants.Audio.NewsLoopA,
+        Constants.Audio.NewsLoopB,
+        Constants.Images.RangeSlider,
+        Constants.Images.RangeThumb,
+        Constants.Images.RangeMinSlider,
+        Constants.Video.ActionNewsIntro
+      ));
+    } catch (err) {
+      console.warn("error loading audio/images/video: ", err)
+      return;
+    }
+
+    return Promise.all(promises);
+  }
+
+  async _loadFinished () {
     const loopA = new Expo.Audio.Sound();
     const loopB = new Expo.Audio.Sound();
 
     try {
       await loopA.loadAsync(
-        require('./assets/news-loop-a.mp3'),
+        Constants.Audio.NewsLoopA,
         Constants.InitialAudioStatus
       );
+
       await loopB.loadAsync(
-        require('./assets/news-loop-b.mp3'),
+        Constants.Audio.NewsLoopB,
         Constants.InitialAudioStatus
       );
-      await Font.loadAsync({
-        'montserrat-bold': require('./assets/fonts/Montserrat-Black.ttf'),
-        'montserrat': require('./assets/fonts/Montserrat-Bold.ttf'),
-        'montserrat-light': require('./assets/fonts/Montserrat-Regular.ttf')
-      });
-    } catch (err) {
-      console.warn("error loading sounds: ", err)
-      return;
+    } catch (error) {
+      console.warn("unable to create sounds")
     }
 
     this.loopA = loopA;
     this.loopB = loopB;
-
-    this.setState({
-      loaded: true
-    });
+    this.setState({ loaded: true })
   }
 
-  hideSplash = () => {
-    this.setState({splash: false});
+  hideIntro = () => {
+    this.setState({hideIntro: true});
   }
 
   reset = () => {
@@ -79,10 +104,11 @@ export default class App extends React.Component {
 
   async startGame () {
     const {started, phaseOneTime, phaseTwoTime} = this.state;
+
     if (started) {
       return;
     }
-
+    
     const totalTime = phaseOneTime + phaseTwoTime;
     const videoStartTime = totalTime - Constants.VideoLength;
     const fadeStartTime = (videoStartTime - Constants.FadeDuration);
@@ -94,6 +120,7 @@ export default class App extends React.Component {
       finalCountdownStarted: false,
       elapsed: 0
     };
+    console.log("startGame")
 
     await this.loopA.setVolumeAsync(1);
     await this.loopB.setVolumeAsync(0);
@@ -102,33 +129,45 @@ export default class App extends React.Component {
     while (instance.elapsed < totalTime) {
       instance.elapsed = (new Date().getTime() - startTime)/1000;
       if (!instance.started) {
-        this.loopA.playFromPositionAsync(0);
-        this.loopB.playFromPositionAsync(0);
+        console.log("START")
+        await this.loopA.playFromPositionAsync(0);
+        await this.loopB.playFromPositionAsync(0);
         instance.started = true;
       } else if (!instance.finalCountdownStarted && !instance.phaseOneComplete && instance.elapsed > phaseOneTime ) {
         await this.loopB.setVolumeAsync(1);
-        this.loopA.stopAsync();
+        await this.loopA.stopAsync();
+        console.log("------------ ENTER PHASE TWO ------------")
         instance.phaseOneComplete = true;
       } else if (instance.elapsed > fadeStartTime && instance.elapsed < videoStartTime) {
         const val = 1 - (( instance.elapsed - fadeStartTime ) / Constants.FadeDuration);
-        this.loopA.setVolumeAsync(val);
-        this.loopB.setVolumeAsync(val);
+        console.log("------------ FADE OUT ------------")
+        await this.loopA.setVolumeAsync(val);
+        await this.loopB.setVolumeAsync(val);
       } else if (!instance.finalCountdownStarted && instance.elapsed > videoStartTime ) {
-        this.loopA.stopAsync();
-        this.loopB.stopAsync();
-        this.video.playFromPositionAsync(0);
+        console.log("------------ START VIDEO ------------")
+        await this.loopA.stopAsync();
+        await this.loopB.stopAsync();
+        await this.video.playFromPositionAsync(0);
         instance.finalCountdownStarted = true;
       } else if (instance.elapsed > totalTime) {
-        this.loopA.stopAsync();
-        this.loopB.stopAsync();
+        console.log("------------ END ------------")
+        await this.loopA.stopAsync();
+        await this.loopB.stopAsync();
+        return;
       }
+      
       this.setState(instance);
       await sleep(100);
     }
   }
 
   onStart = () => {
-    this.startGame();
+    console.log('onStart')
+    try {
+      this.startGame();
+    } catch(e) {
+      console.warn('Start Game error: ', e);
+    }
   }
 
   onDurationChanged = (percent) => {
@@ -146,8 +185,8 @@ export default class App extends React.Component {
   };
 
   render() {
-    const { loaded, splash, started, finalCountdownStarted, elapsed, complete,
-      phaseOneTime, phaseTwoTime, percent } = this.state;
+    const { loaded, started, finalCountdownStarted, elapsed, complete,
+      phaseOneTime, phaseTwoTime, percent, hideIntro } = this.state;
     const window = Dimensions.get('window');
     const videoWidth = (window.width > window.height) ?  window.width : window.height;
 
@@ -156,13 +195,17 @@ export default class App extends React.Component {
       return (
         <AppLoading
           startAsync={this._loadAssets}
-          onFinish={() => this.setState({ loaded: true })}
+          onFinish={this._loadFinished}
           onError={console.warn} />
       );
     }
-    
+
     let screen;
-    if (complete) {
+    if (!hideIntro) {
+      screen = (
+        <StartupScreen onPress={this.hideIntro} />
+      );
+    } else if (complete) {
       screen = (
         <CompleteScreen onRestart={this.reset} />
       );
@@ -189,7 +232,7 @@ export default class App extends React.Component {
         <StatusBar barStyle="dark-content" />
         <Video
           ref={v => this.video = v}
-          source={require('./assets/action-news-intro.mov')}
+          source={Constants.Video.ActionNewsIntro}
           rate={1.0}
           volume={1.0}
           isMuted={false}
@@ -211,6 +254,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1b1431',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   }
 });

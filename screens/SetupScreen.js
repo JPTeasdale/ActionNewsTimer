@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Slider, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableWithoutFeedback } from 'react-native';
 import { Duration } from 'luxon';
 
+import Slider from '../components/Slider';
 import Constants from '../constants';
 
 function format(seconds) {
@@ -36,16 +37,12 @@ export default class TimerScreen extends React.Component {
       const value = percentComplete * startValue;
 
       this.props.onDurationChanged(value);
-      this.slider.setNativeProps({value});
-
       await sleep(5);
     }
-    this.slider.setNativeProps({value: startValue});
     this.setState({ready: true});
   }
 
   _onChange = (t) => {
-    this.slider.setNativeProps({value: t});
     this.props.onDurationChanged(t);
   }
 
@@ -95,19 +92,19 @@ export default class TimerScreen extends React.Component {
         <TouchableWithoutFeedback onPress={this._onIncrement} >
           <View style={styles.textGroup} >
             <Text style={styles.smallText} > {`Choose Game Duration`} </Text>
-            <Text style={styles.text} > {time} </Text>
+            <Text style={styles.text} >
+                {time}
+            </Text>
             <Text style={styles.smallText} >
               {`Research Phase: ${pOne}     Story Building Phase: ${pTwo}`}
             </Text>
             <Text style={styles.smallText} > {diffifulty} </Text>
           </View>
         </TouchableWithoutFeedback>
-
+        
         <Slider
-          ref={s => this.slider = s}
-          style={styles.range}
-          trackImage={require('../assets/range-track.png')}
-          thumbImage={require('../assets/range-thumb.png')}
+          thumbImage={Constants.Images.RangeThumb}
+          minimumTrackImage={Constants.Images.RangeMinSlider}
           minimumValue={0}
           maximumValue={1}
           value={percent}
@@ -116,7 +113,7 @@ export default class TimerScreen extends React.Component {
         <TouchableWithoutFeedback onPress={this._onStart} >
           <Image 
             style={styles.image}
-            source={require('../assets/button-start.png')} />
+            source={Constants.Images.ButtonStart} />
         </TouchableWithoutFeedback>
       </View>
     );
@@ -134,23 +131,23 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-around',
-    backgroundColor: '#1b1431'
+    backgroundColor: '#1a1331',
+    paddingTop: 20
   },
   smallText: {
     textAlign: 'center',
     fontFamily: 'montserrat-light',
     color: 'white',
-    margin: 10,
+    textShadowColor: '#fff45f',
+    textShadowOffset: {width: -0.5,height: 0.5},
   },
   text: {
     textAlign: 'center',
     fontFamily: 'montserrat-bold',
     fontSize: 60,
-    margin: 10,
-    color: 'white'
-  },
-  range: {
-    width: '100%',
+    color: '#fff45f',
+    textShadowColor: 'white',
+    textShadowOffset: {width: -1,height: 1}
   },
   image: {
     maxWidth: '90%',

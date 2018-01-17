@@ -1,22 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Image, TouchableWithoutFeedback } from 'react-native';
 
+import Constants from '../constants';
 
 export default class TimerScreen extends React.Component {
   render() {
     const {onRestart} = this.props;
 
     return (
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.text} > {'on the air'} </Text>
+      <TouchableWithoutFeedback onPress={onRestart} >
+        <View style={styles.container} >
+          <Image source={Constants.Images.OnTheAirSplash} style={styles.backgroundImage}/>
         </View>
-        <TouchableWithoutFeedback onPress={onRestart} >
-          <Image 
-            style={styles.image}
-            source={require('../assets/button-restart.png')} />
-        </TouchableWithoutFeedback>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -33,14 +29,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#1b1431'
   },
-  text: {
-    fontFamily: 'montserrat-light',
-    fontSize: 90,
-    flex: 0,
-    color: 'white'
-  },
-  image: {
-    maxWidth: '90%',
-    resizeMode: 'contain'
+  backgroundImage: {
+    maxWidth: '100%',
+    maxHeight: '100%',
+    resizeMode: 'cover'
   }
 });
