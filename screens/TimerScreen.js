@@ -1,16 +1,42 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, Slider, TouchableWithoutFeedback } from 'react-native';
-import { Duration } from 'luxon';
+import { ScreenStyles } from './ScreenStyles';
+import TimerText from '../components/TimerText';
 
 import Constants from '../constants';
 
-function timeStr(sec) {
-  return Duration.fromMillis(sec * 1000).toFormat("m:ss");
-}
+
 
 export default class TimerScreen extends React.Component {
+  state = {
+    tapped: 0,
+    tapTime: 0
+  }
+
   _onChange = (t) => {
     this.props.onDurationChanged(t);
+  }
+
+  _onTapped = () => {
+    const {onCancel} = this.props;
+    const {tapTime, tapped} = this.state;
+    
+    if (tapped > 2) {
+      return onCancel();
+    }
+
+    const now = new Date().getTime();
+    const elapsed = now - tapTime;
+    if ( elapsed < 3000 ) {
+      this.setState({
+        tapped: (tapped + 1)
+      });
+    } else {
+      this.setState({
+        tapped: 0,
+        tapTime: now
+      });
+    }
   }
 
   render() {
@@ -18,58 +44,52 @@ export default class TimerScreen extends React.Component {
 
     let timeRemaining = Math.floor(phaseOneTime - elapsed);
 
+    let backgroundColor = '#fff45f';
     let phaseName = 'Research Phase';
     let phaseDesc = 'Reporters CAN draw cards.';
-    let nextPhase = `+ ${timeStr(phaseTwoTime)} for Story Building Phase`;
 
     if (timeRemaining <= 0) {
       timeRemaining = Math.floor(phaseOneTime + phaseTwoTime - elapsed);
       phaseName = 'Story Building Phase';
       phaseDesc = 'Reporters CAN NOT draw cards.';
-      nextPhase = 'When time is up, you\'re On The Air!';
+      backgroundColor = '#f15b40';
     }
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.textPhaseName} > {phaseName} </Text>
-        <View>
-          <Text style={styles.text} > {timeStr(timeRemaining)} </Text>
-          <Text style={styles.textSmall} > {nextPhase} </Text>
+      <TouchableWithoutFeedback onPress={this._onTapped}>
+        <View style={[styles.container, {backgroundColor}]} >
+          <View style={styles.header} >
+            <Text style={styles.textSmall} > {phaseName} </Text>
+          </View>
+          <View style={styles.textPhaseName} >
+            <TimerText time={timeRemaining} />
+          </View>
+          <View style={styles.footer} >
+            <Text style={styles.textSmall} > {phaseDesc} </Text>
+          </View>
         </View>
-        <Text style={styles.textSmall} > {phaseDesc} </Text>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: '#fff45f'
+    ...ScreenStyles.container,
+    paddingTop: 20,
+    paddingBottom: 20
   },
   textPhaseName: {
+    ...ScreenStyles.row,
+    alignItems: 'center',
+    justifyContent: 'center',
     textAlign: 'center',
     fontFamily: 'montserrat',
     color: '#1a1331',
     textShadowOffset: {width: -2,height: 2},
     textShadowColor: 'white',
-    fontSize: 40
-  },
-  text: {
-    textAlign: 'center',
-    fontFamily: 'montserrat-bold',
-    color: '#1a1331',
-    textShadowOffset: {width: -5,height: 5},
-    textShadowColor: 'white',
-    fontSize: 150
+    fontSize: 40,
+    flex: 3
   },
   textSmall: {
     textAlign: 'center',
@@ -77,6 +97,18 @@ const styles = StyleSheet.create({
     color: '#1a1331',
     textShadowOffset: {width: -1,height: 1},
     textShadowColor: 'white',
-    fontSize: 20
+    fontSize: 30
+  },
+  header: {
+    ...ScreenStyles.row,
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center'
+  },
+  footer: {
+    ...ScreenStyles.row,
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center'
   }
 });

@@ -4,12 +4,13 @@ import { Duration } from 'luxon';
 
 import Slider from '../components/Slider';
 import Constants from '../constants';
+import { ScreenStyles } from './ScreenStyles';
 
 function format(seconds) {
   var hours   = Math.floor(seconds / 3600);
   var minutes = Math.floor((seconds - (hours * 3600)) / 60);
   var seconds = seconds - (hours * 3600) - (minutes * 60);
-  return `${minutes}:${seconds}`
+  return `${minutes}:${seconds}`;
 }
 
 function sleep(ms) {
@@ -32,14 +33,18 @@ export default class TimerScreen extends React.Component {
     let elasped = 0;
     const startTime = new Date().getTime();
     while (elasped < fadeTimeMS) {
-      elasped = (new Date().getTime() - startTime);
+      const now = new Date().getTime();
+      elasped = ( now - startTime);
       const percentComplete = (elasped / fadeTimeMS);
       const value = percentComplete * startValue;
 
       this.props.onDurationChanged(value);
       await sleep(5);
     }
-    this.setState({ready: true});
+
+    this.setState({
+      ready: true
+    });
   }
 
   _onChange = (t) => {
@@ -69,8 +74,7 @@ export default class TimerScreen extends React.Component {
   }
 
   render() {
-    const {phaseOneTime, phaseTwoTime, percent} = this.props;
-
+    const {phaseOneTime, phaseTwoTime, percent, videoHeight, videoWidth} = this.props;
     const totalTime = phaseOneTime + phaseTwoTime;
 
     let diffifulty = 'Crazy Hard';
@@ -90,30 +94,29 @@ export default class TimerScreen extends React.Component {
     return (
       <View style={styles.container}>
         <TouchableWithoutFeedback onPress={this._onIncrement} >
-          <View style={styles.textGroup} >
-            <Text style={styles.smallText} > {`Choose Game Duration`} </Text>
+          <View style={styles.centeredRow} >
+            <Text style={styles.smallText} > {`Choose Game Duration`}  </Text>
             <Text style={styles.text} >
                 {time}
             </Text>
             <Text style={styles.smallText} >
               {`Research Phase: ${pOne}     Story Building Phase: ${pTwo}`}
             </Text>
-            <Text style={styles.smallText} > {diffifulty} </Text>
           </View>
         </TouchableWithoutFeedback>
-        
-        <Slider
-          thumbImage={Constants.Images.RangeThumb}
-          minimumTrackImage={Constants.Images.RangeMinSlider}
-          minimumValue={0}
-          maximumValue={1}
-          value={percent}
-          onValueChange={this._onChange} />
-
-        <TouchableWithoutFeedback onPress={this._onStart} >
-          <Image 
-            style={styles.image}
-            source={Constants.Images.ButtonStart} />
+        <View style={styles.sliderRow}>
+          <Slider
+            thumbImage={Constants.Images.RangeThumb}
+            minimumTrackImage={Constants.Images.RangeMinSlider}
+            minimumValue={0}
+            maximumValue={1}
+            value={percent}
+            onValueChange={this._onChange} />
+        </View>
+        <TouchableWithoutFeedback onPress={this._onStart}  >
+          <View style={styles.buttonView}>
+            <Image style={styles.buttonImage} source={Constants.Images.ButtonStart} />
+          </View>
         </TouchableWithoutFeedback>
       </View>
     );
@@ -122,17 +125,24 @@ export default class TimerScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flex: 1,
-    flexDirection: 'column',
+    ...ScreenStyles.container,
+    paddingTop: 20,
+    width: '100%',
+    justifyContent: 'space-around'
+  },
+  centeredRow: {
+    ...ScreenStyles.row,
     alignItems: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: '#1a1331',
-    paddingTop: 20
+    justifyContent: 'center',
+    textAlign: 'center',
+    width: '100%'
+  },
+  sliderRow: {
+    ...ScreenStyles.row,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 10
   },
   smallText: {
     textAlign: 'center',
@@ -149,8 +159,13 @@ const styles = StyleSheet.create({
     textShadowColor: 'white',
     textShadowOffset: {width: -1,height: 1}
   },
-  image: {
-    maxWidth: '90%',
-    resizeMode: 'contain'
+  buttonView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  buttonImage: {
+    resizeMode: 'contain',
+    width: '90%'
   }
 });

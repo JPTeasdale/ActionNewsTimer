@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Image, View, TouchableWithoutFeedback } from 'react-native';
+import { ScreenStyles } from './ScreenStyles';
 
 import Constants from '../constants';
 
@@ -22,14 +23,7 @@ export default class TimerScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+    ...ScreenStyles.container,
     backgroundColor: '#1b1431'
   },
   backgroundImage: {

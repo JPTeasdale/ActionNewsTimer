@@ -1,5 +1,5 @@
 const MinPhaseTwo = 20;
-const MaxPhaseTwo = 110;
+const MaxPhaseTwo = 100;
 
 const MinPhaseOne = 30;
 const MaxPhaseOne = 150;
@@ -25,6 +25,16 @@ export default {
     isMuted: false,
     isLooping: true
   },
+  InitialVideoStatus: {
+    progressUpdateIntervalMillis: 500,
+    positionMillis: 0,
+    shouldPlay: false,
+    rate: 1.0,
+    shouldCorrectPitch: false,
+    volume: 1.0,
+    isMuted: false,
+    isLooping: false
+  },
   Images: {
     Rainbow: require('./assets/images/rainbow.png'),
     ActionNewsSplash: require('./assets/images/action-news.png'),
@@ -35,11 +45,11 @@ export default {
     OnTheAirSplash: require('./assets/images/on-the-air.png')
   },
   Audio: {
-    NewsLoopA: require('./assets/audio/news-loop-a-looped.mp3'),
-    NewsLoopB: require('./assets/audio/news-loop-b.mp3')
+    NewsLoopA: require('./assets/audio/breaking-news-headlines-loop.m4a'),
+    NewsLoopB: require('./assets/audio/breaking-news-headlines-loop-b.m4a')
   },
   Video: {
-    ActionNewsIntro: require('./assets/video/action-news-intro.mov')
+    ActionNewsIntro: require('./assets/video/action-news-intro.mp4')
   },
   Fonts: {
     MontserratBlack: require('./assets/fonts/Montserrat-Black.ttf'),

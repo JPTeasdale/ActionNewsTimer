@@ -3,10 +3,11 @@ import { StyleSheet, View, Image, PanResponder } from 'react-native';
 
 const TrackHeight = 105;
 const ThumbWidth = 117;
+const ThumbAspect = ThumbWidth / TrackHeight;
 
 export default class Slider extends React.Component {
   state = {
-    width: 0
+    trackWidth: 0
   }
   
   componentWillMount() {
@@ -49,7 +50,7 @@ export default class Slider extends React.Component {
   }
 
   _onChange = (move) => {
-    const {value, onValueChange} = this.props;
+    const {onValueChange} = this.props;
     const {startWidth} = this.state;
     const newValue = this._widthToValue(startWidth + move.dx);
 
@@ -57,7 +58,7 @@ export default class Slider extends React.Component {
   }
   
   _onStart = () => {
-    const {value, onValueChange} = this.props;
+    const {value} = this.props;
     const startWidth = this._valueToWidth(value);
     this.setState({startWidth})
   }
@@ -73,23 +74,21 @@ export default class Slider extends React.Component {
   }
 
   _valueToWidth = (v) => {
-    const {width} = this.state;
-    return this.state.width * this._computePercent(v);
+    const {trackWidth} = this.state;
+    return trackWidth * this._computePercent(v);
   }
 
   _widthToValue = (w) => {
     const {minimumValue, maximumValue} = this.props;
-    const {width} = this.state;
+    const {trackWidth} = this.state;
 
-    const percent = w/width;
+    const percent = w/trackWidth;
     const value = minimumValue + percent * (maximumValue - minimumValue);
     return this._capValue(value);
   }
   
-
   _computePercent = (value) => {
     const {minimumValue, maximumValue} = this.props;
-    const {width} = this.state;
 
     const range = maximumValue - minimumValue;
     const cappedValue = this._capValue(value);
@@ -99,31 +98,28 @@ export default class Slider extends React.Component {
   }
 
   _onLayout = (evt) => {
-    var {x, y, width, height} = evt.nativeEvent.layout;
-    this.setState({width: width - ThumbWidth})
+    var {height, width} = evt.nativeEvent.layout;
+    this.setState({
+      trackWidth: width - ThumbWidth,
+    });
+    this.forceUpdate();
   }
 
   render() {
-    const {thumbImage, minimumTrackImage,
-      minimumValue, maximumValue,
-      value, onValueChange} = this.props;
-
-    const width = this._valueToWidth(value);
-
-    const widthStyle = StyleSheet.create({
-      width
-    });
+    const {thumbImage, minimumTrackImage, value} = this.props;
+    const trackWidth = this._valueToWidth(value);
 
     return (
       <View style={styles.container} onLayout={this._onLayout}>
-          <Image source={minimumTrackImage} style={{
-            resizeMode: 'stretch',
-            height: TrackHeight,
-            width
-          }} />
-          <View {...this._panResponder.panHandlers} >
-            <Image source={thumbImage} style={styles.thumb} />
-          </View>
+        <Image source={minimumTrackImage} style={{
+          resizeMode: 'stretch',
+          height: '100%',
+          width: trackWidth
+        }} />
+        <View {...this._panResponder.panHandlers} style={{height: '100%', flex: 1}} >
+          <Image source={thumbImage} style={styles.thumb} />
+        </View>
+        <View style={{flex: 3, zIndex: -1}} />
       </View>
     );
   }
@@ -131,14 +127,17 @@ export default class Slider extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    maxHeight: TrackHeight,
     width: '100%',
     display: 'flex',
     flex: 0,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'flex-start'
   },
   thumb: {
-    height: TrackHeight,
-    width: ThumbWidth,
-    resizeMode: 'cover'
+    resizeMode: 'contain',
+    height: '100%',
+    aspectRatio: ThumbAspect,
+    marginLeft: -1
   }
 });

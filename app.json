@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ActionNewsTimer",
-    "version": "1.0.2",
+    "version": "1.0.12",
     "sdkVersion": "24.0.0",
     "slug": "action-news-game-timer",
     "privacy": "public",
@@ -14,12 +14,13 @@
     ],
     "ios": {
       "bundleIdentifier": "com.contendergames.actionnews.timer",
-      "buildNumber": "1.0.2",
+      "buildNumber": "1.0.12",
       "loadJSInBackgroundExperimental": true
     },
     "android": {
       "package": "com.contendergames.actionnews.timer",
-      "versionCode": 1
+      "versionCode": 15,
+      "permissions": []
     },
     "androidStatusBar": {
       "barStyle": "dark-content",
