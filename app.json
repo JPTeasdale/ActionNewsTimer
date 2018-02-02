@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "ActionNewsTimer",
-    "version": "1.0.13",
-    "sdkVersion": "24.0.0",
+    "version": "1.0.15",
+    "sdkVersion": "25.0.0",
     "slug": "action-news-game-timer",
     "privacy": "public",
     "platforms": ["ios", "android"],
@@ -10,16 +10,19 @@
     "primaryColor": "#1b1431",
     "icon": "./assets/images/app-icon.png",
     "assetBundlePatterns": [
-      "./assets/images/*"
+      "assets/audio/**",
+      "assets/fonts/**",
+      "assets/images/**",
+      "assets/video/**"
     ],
     "ios": {
       "bundleIdentifier": "com.contendergames.actionnews.timer",
-      "buildNumber": "1.0.13",
+      "buildNumber": "1.0.15",
       "loadJSInBackgroundExperimental": true
     },
     "android": {
       "package": "com.contendergames.actionnews.timer",
-      "versionCode": 15,
+      "versionCode": 17,
       "permissions": []
     },
     "androidStatusBar": {

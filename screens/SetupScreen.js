@@ -35,6 +35,7 @@ export default class TimerScreen extends React.Component {
     while (elasped < fadeTimeMS) {
       const now = new Date().getTime();
       elasped = ( now - startTime);
+      elasped = Math.min(elasped, fadeTimeMS);
       const percentComplete = (elasped / fadeTimeMS);
       const value = percentComplete * startValue;
 
@@ -94,7 +95,7 @@ export default class TimerScreen extends React.Component {
     return (
       <View style={styles.container}>
         <TouchableWithoutFeedback onPress={this._onIncrement} >
-          <View style={styles.centeredRow} >
+          <View style={styles.textRow} >
             <Text style={styles.smallText} > {`Choose Game Duration`}  </Text>
             <Text style={styles.text} >
                 {time}
@@ -130,12 +131,13 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-around'
   },
-  centeredRow: {
+  textRow: {
     ...ScreenStyles.row,
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
-    width: '100%'
+    width: '100%',
+    flex: 2
   },
   sliderRow: {
     ...ScreenStyles.row,
